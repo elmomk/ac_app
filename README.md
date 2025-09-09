@@ -43,8 +43,28 @@ A web-based interface to control an AC unit, featuring a modern UI and a FastAPI
    - Or use a local server like VS Code Live Server or Python's built-in HTTP server:
      ```bash
      python -m http.server 8001
+     #or
+     livereload -d -p 8001
      ```
      Then navigate to `http://localhost:8001`
+
+## Running with Docker Compose
+
+1. Make sure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+
+2. Build and start the containers:
+   ```bash
+   docker-compose up --build
+   ```
+
+3. Access the application:
+   - Frontend: http://localhost:8001
+   - Backend API: http://localhost:8000
+
+4. To stop the application:
+   ```bash
+   docker-compose down
+   ```
 
 ## API Endpoints
 
