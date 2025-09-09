@@ -1,0 +1,11 @@
+# Use nginx as base image
+FROM nginx:alpine
+
+# Copy the static HTML file to nginx
+COPY index.html /usr/share/nginx/html/
+
+# Expose port 8001
+EXPOSE 8001
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
