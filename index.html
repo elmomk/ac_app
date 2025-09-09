@@ -169,6 +169,10 @@
     </div>
 
     <script>
+        // Temperature configuration
+        const TEMP_MIN = 21;  // Minimum temperature in Celsius
+        const TEMP_MAX = 30;  // Maximum temperature in Celsius
+        
         // State variables for the simulated AC
         let acState = {
             isOn: false,
@@ -291,11 +295,9 @@
             }
 
             // Update the gauge bar width
-            const minTemp = 16;
-            const maxTemp = 30;
-            const tempRange = maxTemp - minTemp;
+            const tempRange = TEMP_MAX - TEMP_MIN;
             const currentTemp = acState.temperature;
-            const tempPercentage = ((currentTemp - minTemp) / tempRange) * 100;
+            const tempPercentage = ((currentTemp - TEMP_MIN) / tempRange) * 100;
             gaugeBar.style.width = `${tempPercentage}%`;
         }
 
@@ -345,7 +347,7 @@
         function changeTemperature(delta) {
             if (acState.isOn) {
                 const newTemp = acState.temperature + delta;
-                if (newTemp >= 16 && newTemp <= 30) {
+                if (newTemp >= TEMP_MIN && newTemp <= TEMP_MAX) {
                     const newState = { ...acState,
                         temperature: newTemp
                     };
@@ -453,12 +455,10 @@
 
                 // Calculate the temperature based on the click position
                 const clickPercentage = (clickX - gaugeLeft) / gaugeWidth;
-                const minTemp = 16;
-                const maxTemp = 30;
-                const newTemp = Math.round(minTemp + (clickPercentage * (maxTemp - minTemp)));
+                const newTemp = Math.round(TEMP_MIN + (clickPercentage * (TEMP_MAX - TEMP_MIN)));
 
                 // Update the state with the new temperature, clamping to the valid range
-                const clampedTemp = Math.max(minTemp, Math.min(maxTemp, newTemp));
+                const clampedTemp = Math.max(TEMP_MIN, Math.min(TEMP_MAX, newTemp));
                 const newState = { ...acState, temperature: clampedTemp };
                 sendCommand(newState);
             }
