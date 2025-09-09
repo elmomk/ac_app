@@ -96,16 +96,37 @@
             </button>
         </div>
 
-        <!-- Mode and Fan Speed Controls -->
-        <div class="flex justify-between w-full max-w-xs">
-            <button id="mode-btn" class="flex flex-col items-center p-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors">
-                <span class="text-3xl mb-1" id="control-mode-icon"></span>
-                <span class="button-text">Mode</span>
-            </button>
-            <button id="fan-btn" class="flex flex-col items-center p-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors">
-                <span class="text-3xl mb-1" id="control-fan-icon"></span>
-                <span class="button-text">Fan</span>
-            </button>
+        <!-- Mode and Fan Speed Controls (Now with dropdowns) -->
+        <div class="flex justify-between w-full max-w-xs space-x-4">
+            <!-- Mode Dropdown -->
+            <div class="relative w-1/2">
+                <button id="mode-dropdown-btn" class="w-full flex flex-col items-center p-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors">
+                    <span class="text-3xl mb-1" id="control-mode-icon"></span>
+                    <span class="button-text">Mode</span>
+                </button>
+                <div id="mode-dropdown-menu" class="absolute z-10 hidden mt-2 w-full origin-top-right rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="mode-dropdown-btn" tabindex="-1">
+                    <div class="py-1" role="none">
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="mode-cool-option">Cool</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="mode-heat-option">Heat</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="mode-fan-option">Fan</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fan Speed Dropdown -->
+            <div class="relative w-1/2">
+                <button id="fan-dropdown-btn" class="w-full flex flex-col items-center p-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors">
+                    <span class="text-3xl mb-1" id="control-fan-icon"></span>
+                    <span class="button-text">Fan</span>
+                </button>
+                <div id="fan-dropdown-menu" class="absolute z-10 hidden mt-2 w-full origin-top-right rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="fan-dropdown-btn" tabindex="-1">
+                    <div class="py-1" role="none">
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-low-option">Low</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-medium-option">Medium</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-high-option">High</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -127,8 +148,6 @@
         const powerBtn = document.getElementById('power-btn');
         const tempUpBtn = document.getElementById('temp-up-btn');
         const tempDownBtn = document.getElementById('temp-down-btn');
-        const modeBtn = document.getElementById('mode-btn');
-        const fanBtn = document.getElementById('fan-btn');
         const acContainer = document.getElementById('ac-container');
         const modeIconContainer = document.getElementById('mode-icon-container');
         const fanIconContainer = document.getElementById('fan-icon-container');
@@ -140,8 +159,17 @@
         const controlModeIcon = document.getElementById('control-mode-icon');
         const controlFanIcon = document.getElementById('control-fan-icon');
 
-        // All interactive buttons
-        const allButtons = [powerBtn, tempUpBtn, tempDownBtn, modeBtn, fanBtn];
+        // New UI elements for dropdowns
+        const modeDropdownBtn = document.getElementById('mode-dropdown-btn');
+        const modeDropdownMenu = document.getElementById('mode-dropdown-menu');
+        const fanDropdownBtn = document.getElementById('fan-dropdown-btn');
+        const fanDropdownMenu = document.getElementById('fan-dropdown-menu');
+        const allButtons = [powerBtn, tempUpBtn, tempDownBtn, modeDropdownBtn, fanDropdownBtn];
+
+        // Function to toggle dropdown visibility
+        function toggleDropdown(dropdownMenu) {
+            dropdownMenu.classList.toggle('hidden');
+        }
 
         // Function to render the current state to the UI
         function renderState() {
@@ -216,7 +244,7 @@
             }
         }
 
-        // FAKE API function to simulate sending a command to the Raspberry Pi
+        // API function to send a command
         async function sendCommand(newState) {
             isSending = true;
             renderState();
@@ -271,36 +299,87 @@
             }
         }
 
-        function changeMode() {
+        // Functions for dropdown item selection
+        function selectMode(newMode) {
             if (acState.isOn) {
-                const modes = ['Cool', 'Heat', 'Fan'];
-                const currentIndex = modes.indexOf(acState.mode);
-                const nextIndex = (currentIndex + 1) % modes.length;
                 const newState = { ...acState,
-                    mode: modes[nextIndex]
+                    mode: newMode
                 };
                 sendCommand(newState);
+                modeDropdownMenu.classList.add('hidden');
             }
         }
 
-        function changeFanSpeed() {
+        function selectFanSpeed(newSpeed) {
             if (acState.isOn) {
-                const speeds = ['Low', 'Medium', 'High'];
-                const currentIndex = speeds.indexOf(acState.fanSpeed);
-                const nextIndex = (currentIndex + 1) % speeds.length;
                 const newState = { ...acState,
-                    fanSpeed: speeds[nextIndex]
+                    fanSpeed: newSpeed
                 };
                 sendCommand(newState);
+                fanDropdownMenu.classList.add('hidden');
             }
         }
+
 
         // Event listeners for buttons
         powerBtn.addEventListener('click', togglePower);
         tempUpBtn.addEventListener('click', () => changeTemperature(1));
         tempDownBtn.addEventListener('click', () => changeTemperature(-1));
-        modeBtn.addEventListener('click', changeMode);
-        fanBtn.addEventListener('click', changeFanSpeed);
+        
+        // Event listeners for new dropdown buttons
+        // Prevent click from bubbling to the document
+        modeDropdownBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleDropdown(modeDropdownMenu);
+        });
+        fanDropdownBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleDropdown(fanDropdownMenu);
+        });
+
+        // Event listeners for dropdown menu items
+        // Prevent default link behavior and stop event bubbling
+        document.getElementById('mode-cool-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectMode('Cool');
+        });
+        document.getElementById('mode-heat-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectMode('Heat');
+        });
+        document.getElementById('mode-fan-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectMode('Fan');
+        });
+
+        document.getElementById('fan-low-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectFanSpeed('Low');
+        });
+        document.getElementById('fan-medium-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectFanSpeed('Medium');
+        });
+        document.getElementById('fan-high-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectFanSpeed('High');
+        });
+
+        // Hide dropdowns when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!modeDropdownMenu.contains(event.target) && !modeDropdownBtn.contains(event.target)) {
+                modeDropdownMenu.classList.add('hidden');
+            }
+            if (!fanDropdownMenu.contains(event.target) && !fanDropdownBtn.contains(event.target)) {
+                fanDropdownMenu.classList.add('hidden');
+            }
+        });
 
         // Initial render
         renderState();
@@ -308,4 +387,3 @@
 </body>
 
 </html>
-
