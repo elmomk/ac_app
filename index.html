@@ -93,6 +93,31 @@
             border: 4px solid #2c2c2c;
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
+
+        #temp-slider.cold::-webkit-slider-thumb {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E❄️%3C/text%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 60%;
+        }
+        #temp-slider.hot::-webkit-slider-thumb {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔥%3C/text%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 60%;
+        }
+        #temp-slider.cold::-moz-range-thumb {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E❄️%3C/text%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 60%;
+        }
+        #temp-slider.hot::-moz-range-thumb {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔥%3C/text%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 60%;
+        }
     </style>
 </head>
 
@@ -280,6 +305,18 @@
                 powerBtn.classList.remove('bg-gray-600');
                 sliderContainer.classList.remove('opacity-0');
                 tempSlider.value = acState.temperature;
+
+                // Update slider thumb icon
+                if (acState.temperature <= 23) {
+                    tempSlider.classList.add('cold');
+                    tempSlider.classList.remove('hot');
+                } else if (acState.temperature >= 28) {
+                    tempSlider.classList.add('hot');
+                    tempSlider.classList.remove('cold');
+                } else {
+                    tempSlider.classList.remove('cold');
+                    tempSlider.classList.remove('hot');
+                }
             } else {
                 // AC is OFF
                 acContainer.classList.add('bg-gray-900');
@@ -292,6 +329,8 @@
                 powerBtn.classList.remove('bg-red-500');
                 powerBtn.classList.add('bg-gray-600');
                 sliderContainer.classList.add('opacity-0');
+                tempSlider.classList.remove('cold');
+                tempSlider.classList.remove('hot');
             }
 
             // Update mode display
