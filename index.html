@@ -142,9 +142,26 @@
                 </button>
                 <div id="fan-dropdown-menu" class="absolute z-10 hidden mt-2 w-full origin-top-right rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="fan-dropdown-btn" tabindex="-1">
                     <div class="py-1" role="none">
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-low-option">Low</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-medium-option">Medium</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-high-option">High</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-auto-option">
+                            <span class="inline-flex items-center">
+                                <span class="mr-2">🤖</span> Auto
+                            </span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-low-option">
+                            <span class="inline-flex items-center">
+                                <span class="mr-2">🌬️</span> Low
+                            </span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-medium-option">
+                            <span class="inline-flex items-center">
+                                <span class="mr-2">💨</span> Medium
+                            </span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-high-option">
+                            <span class="inline-flex items-center">
+                                <span class="mr-2">🌪️</span> High
+                            </span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -155,9 +172,9 @@
         // State variables for the simulated AC
         let acState = {
             isOn: false,
-            temperature: 24, // in Celsius
+            temperature: 22, // in Celsius
             mode: 'Cool',
-            fanSpeed: 'Medium'
+            fanSpeed: 'Low'
         };
 
         // A variable to track if an API request is in progress
@@ -251,6 +268,11 @@
 
             // Update fan speed display
             switch (acState.fanSpeed) {
+                case 'Auto':
+                    fanIcon.textContent = '🤖';
+                    fanText.textContent = 'Auto';
+                    controlFanIcon.textContent = '🤖';
+                    break;
                 case 'Low':
                     fanIcon.textContent = '🌬️';
                     fanText.textContent = 'Low';
@@ -398,6 +420,12 @@
             event.stopPropagation();
             selectFanSpeed('Medium');
         });
+        document.getElementById('fan-auto-option').addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            selectFanSpeed('Auto');
+        });
+        
         document.getElementById('fan-high-option').addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
