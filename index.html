@@ -125,11 +125,26 @@
                     <span class="text-3xl mb-1" id="control-mode-icon"></span>
                     <span class="button-text">Mode</span>
                 </button>
-                <div id="mode-dropdown-menu" class="absolute z-10 hidden mt-2 w-full origin-top-right rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="mode-dropdown-btn" tabindex="-1">
-                    <div class="py-1" role="none">
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="mode-cool-option">Cool</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="mode-heat-option">Heat</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="mode-fan-option">Fan</a>
+                <div id="mode-dropdown-menu" class="absolute z-10 hidden mt-2 origin-top-left rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="horizontal" tabindex="-1">
+                    <div class="flex p-1" role="none">
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="mode-cool-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">❄️</span>
+                                <span>Cool</span>
+                            </div>
+                        </button>
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="mode-heat-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">🔥</span>
+                                <span>Heat</span>
+                            </div>
+                        </button>
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="mode-fan-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">💨</span>
+                                <span>Fan</span>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -140,28 +155,32 @@
                     <span class="text-3xl mb-1" id="control-fan-icon"></span>
                     <span class="button-text">Fan</span>
                 </button>
-                <div id="fan-dropdown-menu" class="absolute z-10 hidden mt-2 w-full origin-top-right rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="fan-dropdown-btn" tabindex="-1">
-                    <div class="py-1" role="none">
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-auto-option">
-                            <span class="inline-flex items-center">
-                                <span class="mr-2">🤖</span> Auto
-                            </span>
-                        </a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-low-option">
-                            <span class="inline-flex items-center">
-                                <span class="mr-2">🌬️</span> Low
-                            </span>
-                        </a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-medium-option">
-                            <span class="inline-flex items-center">
-                                <span class="mr-2">💨</span> Medium
-                            </span>
-                        </a>
-                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" role="menuitem" tabindex="-1" id="fan-high-option">
-                            <span class="inline-flex items-center">
-                                <span class="mr-2">🌪️</span> High
-                            </span>
-                        </a>
+                <div id="fan-dropdown-menu" class="absolute z-10 hidden mt-2 origin-top-right rounded-md bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="horizontal" tabindex="-1">
+                    <div class="flex p-1" role="none">
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="fan-auto-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">🤖</span>
+                                <span>Auto</span>
+                            </div>
+                        </button>
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="fan-low-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">🌬️</span>
+                                <span>Low</span>
+                            </div>
+                        </button>
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="fan-medium-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">💨</span>
+                                <span>Medium</span>
+                            </div>
+                        </button>
+                        <button class="px-3 py-2 mx-1 text-sm text-white rounded hover:bg-gray-600" role="menuitem" id="fan-high-option">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xl">🌪️</span>
+                                <span>High</span>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -394,40 +413,33 @@
             toggleDropdown(fanDropdownMenu);
         });
 
-        // Event listeners for dropdown menu items
-        // Prevent default link behavior and stop event bubbling
-        document.getElementById('mode-cool-option').addEventListener('click', (event) => {
+        // Event listeners for dropdown menu items - using event delegation
+        document.getElementById('mode-dropdown-menu').addEventListener('click', (event) => {
+            const target = event.target.closest('[id^="mode-"]');
+            if (!target) return;
+            
             event.preventDefault();
             event.stopPropagation();
-            selectMode('Cool');
-        });
-        document.getElementById('mode-heat-option').addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            selectMode('Heat');
-        });
-        document.getElementById('mode-fan-option').addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            selectMode('Fan');
+            
+            const mode = target.id.replace('mode-', '').replace('-option', '');
+            if (mode) {
+                selectMode(mode.charAt(0).toUpperCase() + mode.slice(1));
+            }
         });
 
-        document.getElementById('fan-low-option').addEventListener('click', (event) => {
+        document.getElementById('fan-dropdown-menu').addEventListener('click', (event) => {
+            const target = event.target.closest('[id^="fan-"]');
+            if (!target) return;
+            
             event.preventDefault();
             event.stopPropagation();
-            selectFanSpeed('Low');
+            
+            const speed = target.id.replace('fan-', '').replace('-option', '');
+            if (speed) {
+                selectFanSpeed(speed.charAt(0).toUpperCase() + speed.slice(1));
+            }
         });
-        document.getElementById('fan-medium-option').addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            selectFanSpeed('Medium');
-        });
-        document.getElementById('fan-auto-option').addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            selectFanSpeed('Auto');
-        });
-        
+
         document.getElementById('fan-high-option').addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
