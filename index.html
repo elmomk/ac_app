@@ -54,6 +54,23 @@
             cursor: not-allowed;
             opacity: 0.5;
         }
+
+        /* Gauge Bar specific styles */
+        .gauge-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #4a4a4a;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 1rem;
+            cursor: pointer; /* Add a pointer cursor to show it's clickable */
+        }
+
+        .gauge-bar {
+            height: 100%;
+            background-image: linear-gradient(to right, #4ade80, #ef4444);
+            transition: width 0.5s ease-in-out;
+        }
     </style>
 </head>
 
@@ -64,6 +81,10 @@
         <div class="w-full text-center mb-6">
             <div class="text-4xl font-bold mb-2" id="temp-display">--°C</div>
             <div class="text-lg font-medium text-gray-400" id="status-text">OFF</div>
+            <!-- New Gauge Bar -->
+            <div id="gauge-container" class="gauge-bar-container opacity-0 transition-opacity">
+                <div id="gauge-bar" class="gauge-bar"></div>
+            </div>
         </div>
 
         <!-- AC State Icons -->
@@ -158,6 +179,8 @@
         const powerIcon = document.getElementById('power-icon');
         const controlModeIcon = document.getElementById('control-mode-icon');
         const controlFanIcon = document.getElementById('control-fan-icon');
+        const gaugeContainer = document.getElementById('gauge-container');
+        const gaugeBar = document.getElementById('gauge-bar');
 
         // New UI elements for dropdowns
         const modeDropdownBtn = document.getElementById('mode-dropdown-btn');
@@ -192,6 +215,7 @@
                 fanIconContainer.classList.remove('opacity-30');
                 powerBtn.classList.add('bg-red-500');
                 powerBtn.classList.remove('bg-gray-600');
+                gaugeContainer.classList.remove('opacity-0');
             } else {
                 // AC is OFF
                 acContainer.classList.add('bg-gray-900');
@@ -203,6 +227,7 @@
                 fanIconContainer.classList.add('opacity-30');
                 powerBtn.classList.remove('bg-red-500');
                 powerBtn.classList.add('bg-gray-600');
+                gaugeContainer.classList.add('opacity-0');
             }
 
             // Update mode display
@@ -242,6 +267,14 @@
                     controlFanIcon.textContent = '🌪️';
                     break;
             }
+
+            // Update the gauge bar width
+            const minTemp = 16;
+            const maxTemp = 30;
+            const tempRange = maxTemp - minTemp;
+            const currentTemp = acState.temperature;
+            const tempPercentage = ((currentTemp - minTemp) / tempRange) * 100;
+            gaugeBar.style.width = `${tempPercentage}%`;
         }
 
         // API function to send a command
@@ -378,6 +411,28 @@
             }
             if (!fanDropdownMenu.contains(event.target) && !fanDropdownBtn.contains(event.target)) {
                 fanDropdownMenu.classList.add('hidden');
+            }
+        });
+
+        // Event listener for interactive gauge bar
+        gaugeContainer.addEventListener('click', (event) => {
+            if (acState.isOn) {
+                // Get the gauge's position and width
+                const rect = gaugeContainer.getBoundingClientRect();
+                const clickX = event.clientX;
+                const gaugeWidth = rect.width;
+                const gaugeLeft = rect.left;
+
+                // Calculate the temperature based on the click position
+                const clickPercentage = (clickX - gaugeLeft) / gaugeWidth;
+                const minTemp = 16;
+                const maxTemp = 30;
+                const newTemp = Math.round(minTemp + (clickPercentage * (maxTemp - minTemp)));
+
+                // Update the state with the new temperature, clamping to the valid range
+                const clampedTemp = Math.max(minTemp, Math.min(maxTemp, newTemp));
+                const newState = { ...acState, temperature: clampedTemp };
+                sendCommand(newState);
             }
         });
 
