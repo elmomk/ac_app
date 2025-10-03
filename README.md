@@ -10,85 +10,111 @@ A web-based interface to control an AC unit, featuring a modern UI and a FastAPI
 - ⚡ Power on/off control
 - 📱 Responsive design that works on desktop and mobile
 - 🔄 Real-time state updates
+- 🐳 Dockerized for easy setup and deployment
 
-## Prerequisites
+## Project Structure
 
-- Python 3.7+
-- pip (Python package manager)
-- Modern web browser (Chrome, Firefox, Safari, Edge)
+```
+/
+├── backend/
+│   ├── Dockerfile
+│   ├── main.py
+│   └── requirements.txt
+├── pwa/
+│   ├── Dockerfile
+│   ├── index.html
+│   ├── manifest.json
+│   └── sw.js
+├── assets/
+│   └── ac_controller_architecture.png
+├── docker-compose.yml
+└── README.md
+```
 
-## Installation
+## Running the Application with Docker Compose
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd ac_app
-   ```
+This is the recommended way to run the application.
 
-2. Install the required Python packages:
-   ```bash
-   pip install fastapi uvicorn pydantic
-   ```
+### Prerequisites
 
-## Running the Application
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-1. Start the FastAPI backend server:
-   ```bash
-   uvicorn main:app --reload
-   ```
-   The API will be available at `http://127.0.0.1:8000`
+### Instructions
 
-2. Open the web interface:
-   - Simply open `index.html` in your web browser
-   - Or use a local server like VS Code Live Server or Python's built-in HTTP server:
-     ```bash
-     python -m http.server 8001
-     #or
-     livereload -d -p 8001
-     ```
-     Then navigate to `http://localhost:8001`
+1.  Clone the repository:
+    ```bash
+    git clone <repository-url>
+    cd ac_app
+    ```
 
-## Running with Docker Compose
+2.  Build and start the containers:
+    ```bash
+    docker-compose up --build
+    ```
 
-1. Make sure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+3.  Access the application:
+    -   **Frontend:** [http://localhost:8080](http://localhost:8001)
+    -   **Backend API:** [http://localhost:8000](http://localhost:8000)
 
-2. Build and start the containers:
-   ```bash
-   docker-compose up --build
-   ```
-
-3. Access the application:
-   - Frontend: http://localhost:8001
-   - Backend API: http://localhost:8000
-
-4. To stop the application:
-   ```bash
-   docker-compose down
-   ```
+4.  To stop the application:
+    ```bash
+    docker-compose down
+    ```
 
 ## API Endpoints
 
-- `POST /api/set-state` - Update the AC state
-  - Request body should be a JSON object with:
+The backend provides the following API endpoint:
+
+-   `POST /api/set-state`: Update the AC state.
+
+    The request body should be a JSON object with the following structure:
+
     ```json
     {
       "isOn": boolean,
       "temperature": number (16-30),
-      "mode": string ("cool", "heat", "fan", "dry", "auto"),
-      "fanSpeed": string ("low", "medium", "high", "auto")
+      "mode": string ("Cool", "Heat", "Fan", "Dry", "Auto"),
+      "fanSpeed": string ("Low", "Medium", "High", "Auto")
     }
     ```
 
-## Project Structure
-
-- `main.py` - FastAPI backend server
-- `index.html` - Web interface
-
 ## Development
 
-This project uses:
-- Backend: FastAPI
-- Frontend: Vanilla JavaScript with Tailwind CSS
+For development, you can run the backend and frontend services separately.
+
+### Backend (FastAPI)
+
+1.  Navigate to the `backend` directory:
+    ```bash
+    cd backend
+    ```
+
+2.  Install the required Python packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  Start the FastAPI backend server:
+    ```bash
+    uvicorn main:app --reload
+    ```
+
+    The API will be available at `http://127.0.0.1:8000`.
+
+### Frontend (PWA)
+
+1.  Navigate to the `pwa` directory:
+    ```bash
+    cd pwa
+    ```
+
+2.  Open the `index.html` file in your web browser. You can use a local server like VS Code Live Server or Python's built-in HTTP server:
+    ```bash
+    python -m http.server 8001
+    ```
+
+    Then navigate to `http://localhost:8001`.
 
 ## License
 
@@ -97,9 +123,3 @@ This project is open source and available under the [MIT License](LICENSE).
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Acknowledgments
-
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Inter Font](https://rsms.me/inter/)
